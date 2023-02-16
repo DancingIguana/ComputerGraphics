@@ -24,3 +24,8 @@ Run the app, and you should be able to see the app in your own browser:
 ```
 python3 app.py
 ```
+
+## Example
+
+![App example](https://github.com/DancingIguana/ComputerGraphics/blob/main/LineDrawing/imgs/example.png))
+
