@@ -1,8 +1,8 @@
 # Line Drawing
 
 Homework assignment to plot lines by using any of the two algorithms:
-    - Digital Differential Analyzer
-    - Bresenham
+- Digital Differential Analyzer
+- Bresenham
 
 ## Language
 This project is developed in Python3
