@@ -27,5 +27,5 @@ python3 app.py
 
 ## Example
 
-![App example](https://github.com/DancingIguana/ComputerGraphics/blob/main/LineDrawing/imgs/example.png))
+![App example](https://github.com/DancingIguana/ComputerGraphics/blob/main/LineDrawing/imgs/example.png)
 
