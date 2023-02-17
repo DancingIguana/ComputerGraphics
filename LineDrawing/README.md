@@ -25,6 +25,9 @@ Run the app, and you should be able to see the app in your own browser:
 python3 app.py
 ```
 
+## How to use
+Simply choose the size of your canvas, a line generation algorithm, two reference points inside the canvas and click on the *Draw* button. The canvas is refreshed every time its size is changed.
+
 ## Example
 
 ![App example](https://github.com/DancingIguana/ComputerGraphics/blob/main/LineDrawing/imgs/example.png)
