@@ -21,4 +21,4 @@ python3 draw_cube.py
 
 ## Demo
 
-[![Watch the video](https://img.youtube.com/vi/-yHK786vyNA/maxresdefault.jpg)](https://youtu.be/-yHK786vyNA)
+[![Alt text](https://img.youtube.com/vi/-yHK786vyNA/0.jpg)](https://www.youtube.com/watch?v=-yHK786vyNA)
