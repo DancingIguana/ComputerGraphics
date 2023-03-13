@@ -18,3 +18,7 @@ Run the script, and you should see some cubes:
 ```bash
 python3 draw_cube.py
 ```
+
+## Demo
+
+[![Alt text](https://img.youtube.com/vi/-yHK786vyNA/0.jpg)](https://www.youtube.com/watch?v=-yHK786vyNA)
