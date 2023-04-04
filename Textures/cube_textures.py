@@ -49,12 +49,13 @@ class Cube:
         self.material_ambient = [0.2, 0.2, 0.2, 1.0]
         self.material_diffuse = [0.8,0.8,0.8,1.0]
         self.material_specular = [1,1,1,1.0]
-        self.material_shininess = 100.0
+        self.material_shininess = 10.0
 
     def draw(self):
         glPushMatrix()
         texID = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texID)
+       # glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE )
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.image.get_width(), self.image.get_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, self.datas)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
@@ -62,14 +63,14 @@ class Cube:
 
         glTranslate(self.origin_pos[0],self.origin_pos[1],self.origin_pos[2])
         glRotatef(self.angle,self.rotation_vector[0],self.rotation_vector[1],self.rotation_vector[2])
-        glEnable(GL_COLOR_MATERIAL)
-        glEnable(GL_TEXTURE_2D)
+        #glEnable(GL_COLOR_MATERIAL)
         
         glMaterialfv(GL_FRONT, GL_AMBIENT, self.material_ambient)
         glMaterialfv(GL_FRONT, GL_DIFFUSE, self.material_diffuse)
         glMaterialfv(GL_FRONT, GL_SPECULAR, self.material_specular)
         glMaterialfv(GL_FRONT, GL_SHININESS, self.material_shininess)
         glBegin(GL_QUADS)
+
         for face_idx, face in enumerate(self.faces):
             #glColor3fv(self.colors[face_idx])
             glNormal3fv(self.normals[face_idx])
@@ -77,7 +78,7 @@ class Cube:
                 glTexCoord2fv(self.texture_coordinates[i])
                 glVertex3fv(self.vertices[vertex])
         glEnd()
-        glDisable(GL_COLOR_MATERIAL)
+        #glDisable(GL_COLOR_MATERIAL)
         glDisable(GL_TEXTURE_2D)
         glPopMatrix()
     
@@ -149,7 +150,7 @@ def main():
         cube7.rotate(0.90,-1,1,1)
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        
+
         cube1.draw()
         cube2.draw()
         cube3.draw()
