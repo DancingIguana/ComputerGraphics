@@ -19,26 +19,54 @@ class GraphicsEngine:
         #glCullFace(GL_FRONT_AND_BACK)     
         glDisable(GL_CULL_FACE)
         glCullFace(GL_FRONT_AND_BACK)
- 
+
 
         self.scene = scene
 
-        self.shader = self.createShader("./shaders/blinn_phong_vertex.txt", "./shaders/blinn_phong_fragment.txt")
-        self.position_pointer = glGetAttribLocation(self.shader, "vertexPos")
-        self.texture_pointer = glGetAttribLocation(self.shader, "vertexTexCoord")
-        self.normal_pointer = glGetAttribLocation(self.shader, "vertexNormal")
+        # Load shaders 
+        self.shaders = {}
+        for shader in scene.shaders:
+            self.shaders[shader["key"]] = {
+                "program": self.createShader(
+                    shader["vertex"], 
+                    shader["fragment"],
+                    scene.global_shader_attributes[shader["attributes_key"]]
+                ),
+                "attributes": shader["attributes_key"],
+                
+                }
+
+            #self.shaders[shader["key"]]["attributes"]["position"] = glGetAttribLocation(
+            #    self.shaders[shader["key"]],
+            #    self.shaders[shader["key"]]["attributes"]["name"]
+            #)
+
+        #self.shader = self.createShader(
+        #    "./shaders/blinn_phong_vertex.txt", 
+        #    "./shaders/blinn_phong_fragment.txt"
+        #)
+        
+        #self.position_pointer = glGetAttribLocation(self.shader, "vertexPos")
+        #self.texture_pointer = glGetAttribLocation(self.shader, "vertexTexCoord")
+        #self.normal_pointer = glGetAttribLocation(self.shader, "vertexNormal")
 
         # Load Assets
         self.meshes = {}
+        for key, mesh_file, shader_attribs_key in scene.meshes:
+            self.meshes = Mesh(
+                mesh_file, 
+                scene.global_shader_attributes[shader_attribs_key]
+            )
+        
         self.materials = {}
-        for key, asset_file, asset_type in scene.assets:
-            if asset_type == "material": self.materials[key] = Material(asset_file)
-            elif asset_type == "mesh": self.meshes[key] = Mesh(asset_file, self.shader)
+        for key, material_file in scene.textures:
+            self.materials[key] = Material(material_file)
 
         print(self.materials)
-        # Initialize OpenGL
         
-        glUseProgram(self.shader)
+        # Initialize OpenGL
+
+        glUseProgram(self.shaders["blinn_phong_shader"]["program"])
         glUniform1i(glGetUniformLocation(self.shader, "imageTexture"), 0)
         glEnable(GL_DEPTH_TEST)
 
@@ -69,7 +97,7 @@ class GraphicsEngine:
         }
         self.cameraPosLoc = glGetUniformLocation(self.shader, "cameraPostion")
     
-    def createShader(self, vertexFilepath, fragmentFilepath):
+    def createShader(self, vertexFilepath, fragmentFilepath, attributes):
 
         with open(vertexFilepath,'r') as f:
             vertex_src = f.readlines()
@@ -79,7 +107,13 @@ class GraphicsEngine:
         
         shader = compileProgram(compileShader(vertex_src, GL_VERTEX_SHADER),
                                 compileShader(fragment_src, GL_FRAGMENT_SHADER))
-        
+        print(attributes)
+        for attribute in attributes:
+            glBindAttribLocation(shader, attributes[attribute]["index"], attribute)
+        glLinkProgram(shader)
+        #for attribute in attributes:
+        #    print(attribute, glGetAttribLocation(shader, attribute))
+
         return shader
 
     def render(self, scene):
@@ -104,7 +138,7 @@ class GraphicsEngine:
         glUniform3fv(self.cameraPosLoc, 1, scene.camera.position)
 
         # Draw the materials
-        for mesh_key, material_key, obj in scene.objs:
+        for mesh_key, material_key, shader_key, obj in scene.objs:
             model_transform = pyrr.matrix44.create_identity(dtype=np.float32)
             model_transform = pyrr.matrix44.multiply(
                 m1=model_transform, 
@@ -119,7 +153,7 @@ class GraphicsEngine:
                 )
             )
             glUniformMatrix4fv(self.modelMatrixLocation,1,GL_FALSE,model_transform)
-            self.draw_object(material_key, mesh_key)
+            self.draw_object(material_key, mesh_key,shader_key)
             glFlush()
 
     def load_assets(self, assets):
@@ -133,16 +167,30 @@ class GraphicsEngine:
         return meshes, materials
         
         
-    def draw_object(self,texture_key,mesh_key):
+    def draw_object(self,texture_key,mesh_key,shader_key):
         self.materials[texture_key].use()
         glBindBuffer(GL_ARRAY_BUFFER, self.meshes[mesh_key].vbo)
+
+        for attributes in self.shaders[shader_key]["attributes"]:
+            glEnableVertexAttribArray(attributes["position"])
+            glVertexAttribPointer(
+                attributes["position"],
+                attributes["size"],
+                attributes["type"],
+                attributes["normalize"],
+                attributes["stride"],
+                attributes["pointer"]
+            )
+        """
         glEnableVertexAttribArray(self.position_pointer)
         glVertexAttribPointer(self.position_pointer, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(0))
+        
         glEnableVertexAttribArray(self.texture_pointer)
         glVertexAttribPointer(self.texture_pointer, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
 
         glEnableVertexAttribArray(self.normal_pointer)
         glVertexAttribPointer(self.normal_pointer, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(20))
+        """
         glDrawArrays(GL_TRIANGLES, 0, self.meshes[mesh_key].vertex_count)
 
 

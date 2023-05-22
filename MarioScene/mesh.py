@@ -3,7 +3,7 @@ from OpenGL.GL import *
 import numpy as np
 
 class Mesh:
-    def __init__(self, filename, shader):
+    def __init__(self, filename, shader_attribs):
         # x, y, z, s, t, nx, ny, nz
         vertices = self.loadMesh(filename)
         self.vertex_count = len(vertices) // 8
@@ -13,20 +13,17 @@ class Mesh:
         self.vbo = glGenBuffers(1)
         glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
         glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
-        # Position
-        position = glGetAttribLocation(shader, "vertexPos")
-        #print(position)
-        glEnableVertexAttribArray(position)
-        glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(0))
-        # Texture
-        texCoord = glGetAttribLocation(shader, "vertexTexCoord")
-        #print(texCoord)
-        glEnableVertexAttribArray(texCoord)
-        glVertexAttribPointer(texCoord, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
-        # Normal
-        normal = glGetAttribLocation(shader, "vertexNormal")
-        glEnableVertexAttribArray(normal)
-        glVertexAttribPointer(normal, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(20))
+
+        for attribute in shader_attribs:
+            glEnableVertexAttribArray(shader_attribs[attribute]["index"])
+            glVertexAttribPointer(
+                shader_attribs[attribute]["index"],
+                shader_attribs[attribute]["size"],
+                shader_attribs[attribute]["type"],
+                shader_attribs[attribute]["normalize"],
+                shader_attribs[attribute]["stride"],
+                shader_attribs[attribute]["pointer"]
+            )
 
     def destroy(self):
         glDeleteBuffers(1, (self.vbo,))
