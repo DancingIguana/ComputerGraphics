@@ -2,87 +2,112 @@ from obj import Obj
 from light import Light
 from camera import Camera
 import numpy as np
-from OpenGL.GL import *
-import ctypes
+
 class Scene:
     def __init__(self):
 
-        self.meshes = [
-            (
-                "cube",
-                "./objects/cube/cube.obj",
-                "V3_T2_N3"
-            ),
-            (
-                "box",
-                "./objects/box/box.obj",
-                "V3_T2_N3"
-            )
+        self.assets = [
+            ("cube", "./objects/cube/cube.obj", "mesh"),
+            ("box", "./objects/box/box.obj", "mesh"),
+            ("floor", "./objects/floor/floor.obj", "mesh"),
+            ("square", "./objects/square/square.obj", "mesh"),
+            ("mystery", "./textures/mystery.png", "material"),
+            ("floor_block", "./textures/floor.png", "material"),
+            ("sky", "./textures/sky.png", "material"),
+            ("brick", "./textures/brick.png", "material"),
+            ("mario_sprites", "./textures/mario/idle.png", "material"),
+            ("cloud", "./textures/cloud.png", "material"),
+            ("bush","./textures/bush.png", "material")
         ]
-
-        self.textures = [
-            (
-                "sky",
-                "./textures/sky.png",
-            ),
-            (
-                "mystery",
-                "./textures/mystery.png"
-            )
-        ]
-
-
-        self.global_shader_attributes = {
-            "V3_T2_N3": {
-                "vertexPos": {
-                    "index": 0,
-                    "size": 3,
-                    "type": GL_FLOAT,
-                    "normalize": GL_FALSE,
-                    "stride": 32,
-                    "pointer": ctypes.c_void_p(0)
-                },
-                "vertexTexCoord": {
-                    "index": 1,
-                    "size": 2,
-                    "type": GL_FLOAT,
-                    "normalize": GL_FALSE,
-                    "stride": 32,
-                    "pointer": ctypes.c_void_p(12)
-                },
-                "vertexNormal": {
-                    "index": 2,
-                    "size": 3,
-                    "type": GL_FLOAT,
-                    "normalize": GL_FALSE,
-                    "stride": 32,
-                    "pointer": ctypes.c_void_p(20)
-                },
-            }
-        }
-        
-        self.shaders = [
-            {
-                "key": "blinn_phong_shader", 
-                "vertex":"./shaders/blinn_phong_vertex.txt",
-                "fragment":"./shaders/blinn_phong_fragment.txt",
-                "attributes_key": "V3_T2_N3"
-            }
-        ]
-
+        #self.shaders = [
+        #    ("blinn_phong", "./shaders/")
+        #]
         self.objs = [
             (
                 "box",           
                 "sky",
-                "blinn_phong_shader",
-                Obj(position = [0,0,0], eulers = [0,0,0])
+                Obj(position = [5,0,0], eulers = [0,0,0])
+            ),
+            (
+                "floor",
+                "floor_block",
+                Obj(position=[5,0,-1.5],eulers = [0,0,0])
+            ),
+            (
+                "cube", # key of the object mesh
+                "mystery", # key of the object texture
+                Obj(position = [5,0,0], eulers = [0,0,0])
+            ),
+            (
+                "cube",
+                "brick",
+                Obj(position = [5,-1.5,0], eulers = [0,0,0])
+            ),
+            (
+                "cube", # key of the object mesh
+                "mystery", # key of the object texture
+                Obj(position = [5,-2,0], eulers = [0,0,0])
             ),
             (
                 "cube", # key of the object mesh
                 "brick", # key of the object texture
-                "blinn_phong_shader", # key of the shader
-                Obj(position = [6,0,0], eulers = [0,0,0])
+                Obj(position = [5,-2.5,0], eulers = [0,0,0])
             ),
+            (
+                "cube", # key of the object mesh
+                "mystery", # key of the object texture
+                Obj(position = [5,-3,0], eulers = [0,0,0])
+            ),
+            (
+                "cube", # key of the object mesh
+                "brick", # key of the object texture
+                Obj(position = [5,-3.5,0], eulers = [0,0,0])
+            ),
+            (
+                "cube", # key of the object mesh
+                "mystery", # key of the object texture
+                Obj(position = [5,-2.5,1.5], eulers = [0,0,0])
+            ),
+            (
+                "square",
+                "bush",
+                Obj(position=[5.5,4,-1], eulers=[0,0,0],scale=[1,2,1])
+            ),
+            (
+                "square",
+                "bush",
+                Obj(position=[5.5,2,-1], eulers=[0,0,0],scale=[1,2,1])
+            ),
+            (
+                "square",
+                "bush",
+                Obj(position=[5.5,-3,-1], eulers=[0,0,0],scale=[1,2,1])
+            ),
+            (
+                "square",
+                "cloud",
+                Obj(position=[5.5,3,1], eulers=[0,0,0],scale=[1,1.5,1])
+            ),
+            (
+                "square",
+                "cloud",
+                Obj(position=[5.5,1,1.5], eulers=[0,0,0],scale=[1,2,1])
+            ),
+            (
+                "square",
+                "cloud",
+                Obj(position=[5.5,-3.5,1.2], eulers=[0,0,0],scale=[1,2,1])
+            ),
+            (
+                "square",
+                "cloud",
+                Obj(position=[5.5,-7.5,2], eulers=[0,0,0],scale=[1,2,1])
+            )
+            #(
+            #   "mario",
+            #    "mario_sprites",
+            #    Obj(position = [5.5,0,-1], eulers = [0,0,0])
+            #)
             #(
             #    "cube",
             #    "brick",
@@ -100,8 +125,8 @@ class Scene:
             
             Light(
                 position = [
-                    -0.5,
-                    0,
+                    4.5,
+                    5,
                     0
                 ],
                 color = [
@@ -109,15 +134,49 @@ class Scene:
                     1,
                     1
                 ],
-                strength = 0.5
-            )
+                strength = 5
+            ),
+            Light(
+            position = [
+                3,
+                5,
+                0
+            ],
+            color = [
+                1,
+                1,
+                1
+            ],
+            strength = 100
+            ),
+            Light(
+            position = [
+                3,
+                -5,
+                0
+            ],
+            color = [
+                1,
+                1,
+                1
+            ],
+            strength = 100,
+            ),
+
         ]
 
         self.camera = Camera(
-            position = [-1,0,0]
+            position = [0,5,0]
         )
 
-    def update(self,):
+        self.camera_mode = "follow"
+    def update(self,mario):
+        if self.camera_mode == "follow":
+            self.camera.position = [0,mario.obj.position[1], 0]
+        else:
+            self.camera.position = [-5,0,0]
+
+        self.lights[0].position[1] = mario.obj.position[1]
         #for i in range(len(self.objs)):
         #    self.objs[i][2].eulers[1] += 0.25 * 1
         #    if self.objs[i][2].eulers[1] > 360:
