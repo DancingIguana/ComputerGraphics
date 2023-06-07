@@ -75,6 +75,12 @@ class GraphicsEngine:
                 for i in range(8)
             ]
         }
+
+        self.timeLocation = glGetUniformLocation(self.shader, "time")
+        self.transitionFramesLocation = glGetUniformLocation(self.shader, "transitionFrames")
+        self.initialSizeLocation = glGetUniformLocation(self.shader, "initialSize")
+        self.finalSizeLocation = glGetUniformLocation(self.shader, "finalSize")
+
         self.cameraPosLoc = glGetUniformLocation(self.shader, "cameraPostion")
 
 
@@ -120,11 +126,26 @@ class GraphicsEngine:
             self.draw_object(obj, self.materials[material_key], self.meshes[mesh_key])
             glFlush()
         # Draw mario
-        self.draw_object(mario.obj, mario.current_texture, mario.mesh)
+        self.draw_object(
+            mario.obj, 
+            mario.current_texture, 
+            mario.mesh, 
+            mario.transformation_frame, 
+            initialSize=1, 
+            finalSize=1.5
+        )
         glFlush()
         
         
-    def draw_object(self,obj,material,mesh):
+    def draw_object(
+            self,
+            obj,
+            material,
+            mesh,
+            time = 0, 
+            animationDuration = 10,
+            initialSize = 1,
+            finalSize = 1):
 
         model_transform = pyrr.matrix44.create_identity(dtype=np.float32)
 
@@ -141,6 +162,18 @@ class GraphicsEngine:
         model_transform = pyrr.matrix44.multiply(model_transform, translation_matrix)
 
         glUniformMatrix4fv(self.modelMatrixLocation,1,GL_FALSE,model_transform)
+
+
+        #time = 9
+        #animationDuration = 10
+        #initialSize = 1
+        #finalSize = 2
+
+        glUniform1i(self.timeLocation, time)
+        glUniform1i(self.transitionFramesLocation, animationDuration)
+        glUniform1f(self.initialSizeLocation, initialSize)
+        glUniform1f(self.finalSizeLocation, finalSize)
+
         material.use()
         glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo)
         glEnableVertexAttribArray(self.shader_indexes["vertexPos"])

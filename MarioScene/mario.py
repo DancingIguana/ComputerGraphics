@@ -35,6 +35,8 @@ class Mario:
             "idle": ["idle"],
             "walking": ["walking1", "walking2", "walking3", "walking2"]
         }
+        self.transformation_frame = 0
+        self.is_small = True
         
     def right(self):
         self.obj.position[1] -= 0.03
@@ -43,6 +45,4 @@ class Mario:
     def left(self):
         self.obj.position[1] += 0.03
         self.obj.eulers = [0,180,0]
-
-
 
